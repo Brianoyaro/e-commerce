@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-16 sm:py-24">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-6">About ShopEase</h1>
+        <p class="text-lg sm:text-xl text-white/90">
+            Your trusted online shopping destination for quality products at amazing prices.
+        </p>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-16">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
+                <p class="text-gray-600 mb-4">
+                    ShopEase was founded with a simple mission: to make quality products accessible to everyone, 
+                    with a shopping experience that's seamless and enjoyable.
+                </p>
+                <p class="text-gray-600 mb-4">
+                    We believe that online shopping should be easy, secure, and affordable. That's why we've 
+                    integrated multiple payment options including Stripe for card payments and M-Pesa for 
+                    mobile money, making it convenient for customers across Africa and beyond.
+                </p>
+                <p class="text-gray-600">
+                    Our commitment to customer satisfaction drives everything we do, from curating the best 
+                    products to providing exceptional customer service.
+                </p>
+            </div>
+            <div class="flex justify-center">
+                <div class="w-80 h-80 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-shopping-bag text-9xl text-white/80"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section class="py-16 bg-gray-100">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Our Values</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-gem text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">Quality</h3>
+                <p class="text-gray-600 text-sm">We curate only the best products from trusted suppliers.</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-2xl text-secondary"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">Security</h3>
+                <p class="text-gray-600 text-sm">Your payments and data are always protected.</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-heart text-2xl text-accent"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">Care</h3>
+                <p class="text-gray-600 text-sm">Customer satisfaction is our top priority.</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-globe-africa text-2xl text-green-600"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">Accessibility</h3>
+                <p class="text-gray-600 text-sm">Serving customers across Africa with local payment options.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="py-16">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <p class="text-4xl font-bold text-primary mb-2">10K+</p>
+                <p class="text-gray-600">Happy Customers</p>
+            </div>
+            <div>
+                <p class="text-4xl font-bold text-primary mb-2">5K+</p>
+                <p class="text-gray-600">Products</p>
+            </div>
+            <div>
+                <p class="text-4xl font-bold text-primary mb-2">50+</p>
+                <p class="text-gray-600">Categories</p>
+            </div>
+            <div>
+                <p class="text-4xl font-bold text-primary mb-2">24/7</p>
+                <p class="text-gray-600">Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-gradient-to-r from-primary to-secondary">
+    <div class="max-w-3xl mx-auto px-4 text-center text-white">
+        <h2 class="text-3xl font-bold mb-4">Ready to Start Shopping?</h2>
+        <p class="text-white/90 mb-8">Discover our amazing collection of products at great prices.</p>
+        <a href="{{ url_for('products.list_products') }}" 
+           class="inline-block px-8 py-3 bg-white text-primary font-semibold rounded-full hover:bg-gray-100 transition">
+            Shop Now <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

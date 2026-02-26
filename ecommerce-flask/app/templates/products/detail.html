@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-sm mb-6">
+        <ol class="flex items-center space-x-2 flex-wrap">
+            <li><a href="{{ url_for('main.index') }}" class="text-gray-500 hover:text-primary">Home</a></li>
+            <li><i class="fas fa-chevron-right text-gray-400 text-xs"></i></li>
+            <li><a href="{{ url_for('products.list_products') }}" class="text-gray-500 hover:text-primary">Products</a></li>
+            {% if product.category %}
+            <li><i class="fas fa-chevron-right text-gray-400 text-xs"></i></li>
+            <li><a href="{{ url_for('products.list_products', category=product.category.slug) }}" class="text-gray-500 hover:text-primary">{{ product.category.name }}</a></li>
+            {% endif %}
+            <li><i class="fas fa-chevron-right text-gray-400 text-xs"></i></li>
+            <li class="text-gray-900 font-medium truncate max-w-32">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Product Details -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="grid md:grid-cols-2 gap-0">
+            <!-- Product Image -->
+            <div class="bg-gray-100 p-8 flex items-center justify-center">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                     class="max-w-full h-auto max-h-96 object-contain rounded-lg">
+                {% else %}
+                <div class="w-full h-96 flex items-center justify-center">
+                    <i class="fas fa-image text-8xl text-gray-300"></i>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="p-6 sm:p-8 flex flex-col">
+                {% if product.category %}
+                <span class="text-sm text-primary font-medium mb-2">{{ product.category.name }}</span>
+                {% endif %}
+                
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+                
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-3xl font-bold text-primary">${{ "%.2f"|format(product.price) }}</span>
+                    {% if product.stock > 0 %}
+                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+                        <i class="fas fa-check-circle mr-1"></i> In Stock ({{ product.stock }})
+                    </span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm">
+                        <i class="fas fa-times-circle mr-1"></i> Out of Stock
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if product.description %}
+                <div class="mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Description</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+                </div>
+                {% endif %}
+
+                {% if product.stock > 0 %}
+                <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
+                    <div class="flex items-center gap-4 mb-6">
+                        <label class="font-medium text-gray-700">Quantity:</label>
+                        <div class="flex items-center border border-gray-300 rounded-lg">
+                            <button type="button" onclick="decrementQuantity()" 
+                                    class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}"
+                                   class="w-16 text-center border-0 focus:outline-none focus:ring-0">
+                            <button type="button" onclick="incrementQuantity({{ product.stock }})" 
+                                    class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button type="submit" 
+                                class="flex-1 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-secondary transition flex items-center justify-center gap-2">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <a href="{{ url_for('cart.view_cart') }}" 
+                           class="px-8 py-4 border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition text-center">
+                            View Cart
+                        </a>
+                    </div>
+                </form>
+                {% else %}
+                <div class="mt-auto bg-gray-100 p-4 rounded-xl text-center">
+                    <i class="fas fa-bell text-2xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-600">This product is currently out of stock. Check back soon!</p>
+                </div>
+                {% endif %}
+
+                <!-- Payment Methods -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-500 mb-2">Accepted Payment Methods:</p>
+                    <div class="flex gap-3">
+                        <span class="px-3 py-1 bg-gray-100 rounded text-sm font-medium">
+                            <i class="fab fa-cc-stripe text-blue-600 mr-1"></i> Stripe
+                        </span>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
+                            M-Pesa
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {% for product in related_products %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300">
+                <a href="{{ url_for('products.product_detail', slug=product.slug) }}">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                             class="w-full h-full object-cover hover:scale-110 transition duration-300">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-image text-4xl text-gray-300"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="p-4">
+                    <a href="{{ url_for('products.product_detail', slug=product.slug) }}">
+                        <h3 class="font-semibold text-gray-900 hover:text-primary transition line-clamp-2">
+                            {{ product.name }}
+                        </h3>
+                    </a>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-lg font-bold text-primary">${{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+    function incrementQuantity(max) {
+        const input = document.getElementById('quantity');
+        const current = parseInt(input.value);
+        if (current < max) {
+            input.value = current + 1;
+        }
+    }
+
+    function decrementQuantity() {
+        const input = document.getElementById('quantity');
+        const current = parseInt(input.value);
+        if (current > 1) {
+            input.value = current - 1;
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %}

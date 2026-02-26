@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-plus text-3xl text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Create Account</h1>
+                <p class="text-gray-500">Join us and start shopping</p>
+            </div>
+
+            <form method="POST" class="space-y-5">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <div class="relative">
+                        <input type="text" id="username" name="username" required
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                               placeholder="johndoe">
+                        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email" required
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                               placeholder="you@example.com">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number (for M-Pesa)</label>
+                    <div class="relative">
+                        <input type="tel" id="phone" name="phone"
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                               placeholder="+254700000000">
+                        <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required minlength="6"
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                               placeholder="••••••••">
+                        <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">At least 6 characters</p>
+                </div>
+
+                <div class="flex items-start">
+                    <input type="checkbox" required class="w-4 h-4 mt-1 text-primary border-gray-300 rounded focus:ring-primary">
+                    <span class="ml-2 text-sm text-gray-600">
+                        I agree to the <a href="#" class="text-primary hover:text-secondary">Terms of Service</a> 
+                        and <a href="#" class="text-primary hover:text-secondary">Privacy Policy</a>
+                    </span>
+                </div>
+
+                <button type="submit" 
+                        class="w-full py-3 bg-primary text-white font-semibold rounded-xl hover:bg-secondary transition">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    Already have an account? 
+                    <a href="{{ url_for('auth.login') }}" class="text-primary font-semibold hover:text-secondary">
+                        Sign in
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

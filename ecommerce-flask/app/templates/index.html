@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white">
+    <div class="max-w-7xl mx-auto px-4 py-16 sm:py-24">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                    Discover Amazing Products
+                </h1>
+                <p class="text-lg sm:text-xl text-white/90 mb-8">
+                    Shop the latest trends with secure payments via Stripe and M-Pesa. 
+                    Quality products delivered to your doorstep.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{{ url_for('products.list_products') }}" 
+                       class="px-8 py-3 bg-white text-primary font-semibold rounded-full hover:bg-gray-100 transition">
+                        Shop Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="{{ url_for('main.about') }}" 
+                       class="px-8 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-primary transition">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hidden md:flex justify-center">
+                <div class="relative">
+                    <div class="w-72 h-72 lg:w-96 lg:h-96 bg-white/20 rounded-full absolute -top-4 -left-4"></div>
+                    <div class="w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shopping-bag text-8xl lg:text-9xl text-white/80"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="text-center p-4">
+                <div class="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-truck text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">Free Shipping</h3>
+                <p class="text-sm text-gray-500">On orders over $50</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="w-14 h-14 mx-auto mb-4 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-2xl text-secondary"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">Secure Payment</h3>
+                <p class="text-sm text-gray-500">Stripe & M-Pesa</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="w-14 h-14 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-redo text-2xl text-accent"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">Easy Returns</h3>
+                <p class="text-sm text-gray-500">30 day return policy</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="w-14 h-14 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-headset text-2xl text-green-600"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">24/7 Support</h3>
+                <p class="text-sm text-gray-500">Always here to help</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+{% if categories %}
+<section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8">Shop by Category</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {% for category in categories %}
+            <a href="{{ url_for('products.list_products', category=category.slug) }}" 
+               class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition text-center card-hover">
+                <div class="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                    <i class="fas fa-tag text-white"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">{{ category.name }}</h3>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Products -->
+<section class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold">Featured Products</h2>
+            <a href="{{ url_for('products.list_products') }}" class="text-primary hover:text-secondary font-medium">
+                View All <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+        
+        {% if products %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {% for product in products %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition duration-300">
+                <a href="{{ url_for('products.product_detail', slug=product.slug) }}">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                             class="w-full h-full object-cover hover:scale-110 transition duration-300">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-image text-4xl text-gray-300"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.stock < 5 and product.stock > 0 %}
+                        <span class="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+                            Low Stock
+                        </span>
+                        {% elif product.stock == 0 %}
+                        <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                            Out of Stock
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="p-4">
+                    <a href="{{ url_for('products.product_detail', slug=product.slug) }}">
+                        <h3 class="font-semibold text-gray-900 hover:text-primary transition line-clamp-2">
+                            {{ product.name }}
+                        </h3>
+                    </a>
+                    {% if product.category %}
+                    <p class="text-sm text-gray-500 mt-1">{{ product.category.name }}</p>
+                    {% endif %}
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-lg font-bold text-primary">${{ "%.2f"|format(product.price) }}</span>
+                        {% if product.stock > 0 %}
+                        <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="POST">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" 
+                                    class="w-10 h-10 bg-primary text-white rounded-full hover:bg-secondary transition flex items-center justify-center">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500">No products available yet. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="py-16 bg-gradient-to-r from-primary to-secondary">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Stay Updated</h2>
+        <p class="text-white/90 mb-6">Subscribe to our newsletter for exclusive deals and updates.</p>
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email" placeholder="Enter your email" 
+                   class="flex-grow px-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-white">
+            <button type="submit" 
+                    class="px-8 py-3 bg-white text-primary font-semibold rounded-full hover:bg-gray-100 transition">
+                Subscribe
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
