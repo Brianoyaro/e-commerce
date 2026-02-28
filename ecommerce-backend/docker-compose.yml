@@ -1,0 +1,226 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: ecommerce-api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - GATEWAY_PORT=5000
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - CART_SERVICE_URL=http://cart-service:3005
+      - ORDER_SERVICE_URL=http://order-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
+    depends_on:
+      - auth-service
+      - product-service
+      - cart-service
+      - order-service
+      - payment-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Auth Service
+  auth-service:
+    build: ./auth-service
+    container_name: ecommerce-auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - AUTH_PORT=3001
+      - AUTH_DB_NAME=auth_db
+      - AUTH_DB_USER=postgres
+      - AUTH_DB_PASSWORD=password
+      - AUTH_DB_HOST=auth-db
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - JWT_EXPIRES_IN=7d
+    depends_on:
+      - auth-db
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  auth-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-auth-db
+    environment:
+      - POSTGRES_DB=auth_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Product Service
+  product-service:
+    build: ./product-service
+    container_name: ecommerce-product-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PRODUCT_PORT=3002
+      - PRODUCT_DB_NAME=product_db
+      - PRODUCT_DB_USER=postgres
+      - PRODUCT_DB_PASSWORD=password
+      - PRODUCT_DB_HOST=product-db
+      - AUTH_SERVICE_URL=http://auth-service:3001
+    depends_on:
+      - product-db
+      - auth-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  product-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-product-db
+    environment:
+      - POSTGRES_DB=product_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Cart Service
+  cart-service:
+    build: ./cart-service
+    container_name: ecommerce-cart-service
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - CART_PORT=3005
+      - CART_DB_NAME=cart_db
+      - CART_DB_USER=postgres
+      - CART_DB_PASSWORD=password
+      - CART_DB_HOST=cart-db
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+    depends_on:
+      - cart-db
+      - auth-service
+      - product-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  cart-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-cart-db
+    environment:
+      - POSTGRES_DB=cart_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - cart-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Order Service
+  order-service:
+    build: ./order-service
+    container_name: ecommerce-order-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - ORDER_PORT=3003
+      - ORDER_DB_NAME=order_db
+      - ORDER_DB_USER=postgres
+      - ORDER_DB_PASSWORD=password
+      - ORDER_DB_HOST=order-db
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - CART_SERVICE_URL=http://cart-service:3005
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
+    depends_on:
+      - order-db
+      - auth-service
+      - product-service
+      - cart-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  order-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-order-db
+    environment:
+      - POSTGRES_DB=order_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Payment Service
+  payment-service:
+    build: ./payment-service
+    container_name: ecommerce-payment-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PAYMENT_PORT=3004
+      - PAYMENT_DB_NAME=payment_db
+      - PAYMENT_DB_USER=postgres
+      - PAYMENT_DB_PASSWORD=password
+      - PAYMENT_DB_HOST=payment-db
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - ORDER_SERVICE_URL=http://order-service:3003
+      # Stripe Configuration
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      # M-Pesa Configuration
+      - MPESA_CONSUMER_KEY=${MPESA_CONSUMER_KEY}
+      - MPESA_CONSUMER_SECRET=${MPESA_CONSUMER_SECRET}
+      - MPESA_SHORTCODE=${MPESA_SHORTCODE}
+      - MPESA_PASSKEY=${MPESA_PASSKEY}
+      - MPESA_ENVIRONMENT=${MPESA_ENVIRONMENT:-sandbox}
+      - MPESA_CALLBACK_URL=${MPESA_CALLBACK_URL}
+    depends_on:
+      - payment-db
+      - auth-service
+      - order-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  payment-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-payment-db
+    environment:
+      - POSTGRES_DB=payment_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  product-db-data:
+  cart-db-data:
+  order-db-data:
+  payment-db-data:
